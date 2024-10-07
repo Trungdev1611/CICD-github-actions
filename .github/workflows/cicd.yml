@@ -1,0 +1,37 @@
+name: CI/CD pipeline
+
+on: #action when pipeline run
+    push: 
+        branches:
+            - main #branch name get action
+    pull_request:
+        branches:
+            - main
+jobs:
+    jobname_anything:
+        runs-on: ubuntu-latest
+
+        steps: #declare steps to work
+        - name: checkout code
+          uses: actions/checkout@v2
+
+        - name: set up Nodejs
+          uses: actions/setup-node@v2
+          with:
+            node-version: '16'  #or another version
+        
+        - name: Install dependencies
+          run: npm i
+
+        - name: build project
+          run: npm run build
+
+
+        #chọn vercel để deploy
+        - name: Deploy to vercel
+        #các env này ta khai báo ở biến trong github
+          env: 
+            VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}  # Cần tạo secret trong repo
+            VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+            VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          run: npx vercel --prod --confirm
